@@ -1,0 +1,27 @@
+
+
+th, td {
+    padding: 10px;
+    text-align: center;
+}
+
+thead {
+    background-color: #20283E;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+.btn1{
+
+    margin-right: 10px;
+    
+    
+    }
+    .btn3{
+        margin-inline-end: auto;
+    }
+    
+
+  

@@ -1,0 +1,17 @@
+{"properties": [
+  {
+    "name": "feign.client.config.authentication-service.url",
+    "type": "java.lang.String",
+    "description": "A description for 'feign.client.config.authentication-service.url'"
+  },
+  {
+    "name": "spring.mail.auth",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.mail.auth'"
+  },
+  {
+    "name": "auth-microservice.url",
+    "type": "java.lang.String",
+    "description": "A description for 'auth-microservice.url'"
+  }
+]}
