@@ -7,19 +7,16 @@ import { Select, MenuItem } from "@mui/material";
 import QueueIcon from '@mui/icons-material/Queue';
 
 
-
-
-
 export default function AddService1() {
     let navigate = useNavigate();
 
     useEffect(() => {
-        
+
         const token = localStorage.getItem('token');
         if (!token) {
-          navigate('/auth/Login');
+            navigate('/auth/login');
         }
-      }, [navigate]);
+    }, [navigate]);
 
 
 
@@ -30,9 +27,9 @@ export default function AddService1() {
     const [service_name, setServiceName] = useState('');
     const [url, setUrl] = useState('');
     const [email, setEmail] = useState('');
-    const [httpMethod, setHttpMethod] = useState('');
+    const [httpMethod, setHttpMethod] = useState('GET');
     const [payload, setPayload] = useState('');
-    
+    const [customHeaders, setCustomHeaders] = useState([]);
 
 
     const handleSubmit = (event) => {
@@ -58,9 +55,9 @@ export default function AddService1() {
         if (!url) {
             return alert("Service url cannot be empty");
         }
-        
-        axios.post('http://localhost:8878/healthcheck/service/add', { service_name, url, email, httpMethod, payload })
-       
+
+        axios.post('http://localhost:8878/healthcheck/service/add', { service_name, url, email, httpMethod, payload, customHeaders })
+
 
             .then((res) => {
                 console.log(res.data);
@@ -77,19 +74,21 @@ export default function AddService1() {
     const loadServices = async () => {
         const token = localStorage.getItem("token");
         const result = await axios.get(`http://localhost:8878/healthcheck/services`, {
-              headers: {
+            headers: {
                 Authorization: `Bearer ${token}`
-              }
-            });
+            }
+        });
         setServices(result.data);
     };
+
+    
 
     return (
         <div className='container'>
             <div className='row'>
 
                 <div className='col-md-6 offset-md-3 border rounded p-4 mt-3 shadow-lg'>
-                <h2 className='text-center m-2'>Add Service</h2>
+                    <h2 className='text-center m-2'>Add Service</h2>
                     <form onSubmit={handleSubmit}>
                         <div className='mb-3'>
                             <label htmlFor='Name' className='form-label'>
@@ -130,31 +129,69 @@ export default function AddService1() {
 
 
 
+                        {httpMethod === "GET" ? null : (
+                            <div className='mb-3'>
+                                <label htmlFor='Name' className='form-label'>
+                                    Payload
+                                </label>
+                                <input type={"textarea"} className='form-control rounded-pill' value={payload} onChange={(e) => setPayload(e.target.value)} placeholder='Eg "{"Key": "Value", "key": "value"}"' name='payload' />
+                            </div>
+                        )}
 
                         <div className='mb-3'>
                             <label htmlFor='Name' className='form-label'>
-                                Payload
+                                Custom Headers
                             </label>
-                            <input type={"textarea"} className='form-control rounded-pill' value={payload} onChange={(e) => setPayload(e.target.value)} placeholder='Eg "{"Key": "Value", "key": "value"}"' name='payload' />
+                            <button type="button"  className="btn btn-primary btn-sm ms-2" onClick={() => {
+                                    const newHeaders = [...customHeaders];
+                                    newHeaders.push({ key: '', value: '' });
+                                    setCustomHeaders(newHeaders);
+                                }}>Add Header</button>
+                            <div>
+                                {customHeaders.map((header, index) => (
+                                    <div key={index} className="d-flex align-items-center mt-2">
+                                        <input type="text" className="form-control rounded-pill me-2" value={header.key} placeholder="Key" onChange={(e) => {
+                                            const newHeaders = [...customHeaders];
+                                            newHeaders[index].key = e.target.value;
+                                            setCustomHeaders(newHeaders);
+                                        }} />
+                                        <input type="text"  className="form-control rounded-pill me-2" value={header.value} placeholder="Value" onChange={(e) => {
+                                            const newHeaders = [...customHeaders];
+                                            newHeaders[index].value = e.target.value;
+                                            setCustomHeaders(newHeaders);
+                                        }} />
+                                        <button type="button" className="btn btn-danger btn-sm" onClick={() => {
+                                            const newHeaders = [...customHeaders];
+                                            newHeaders.splice(index, 1);
+                                            setCustomHeaders(newHeaders);
+                                        }}>Remove</button>
+                                    </div>
+                                ))}
+                                
+                            </div>
                         </div>
+
+
+
+
                         <div className="text-center">
                             {/* <button className="btn btn-primary mx-2 ">Submit</button> */}
 
                             {/* <Link className="btn btn-danger mx-2 rounded-pill" to="/">
                                 Cancel
                             </Link> */}
-                              <Button style={{
-                                                backgroundColor: "#0072ff",
+                            <Button style={{
+                                backgroundColor: "#0072ff",
 
-                                            }} variant="contained" type="submit" startIcon={<QueueIcon />} onclick={handleSubmit}>
-                                
+                            }} variant="contained" type="submit" startIcon={<QueueIcon />} onclick={handleSubmit}>
+
                                 Submit
                             </Button>
 
                             <Button style={{
-                                                backgroundColor: "#FF4E50",
+                                backgroundColor: "#FF4E50",
 
-                                            }} variant="contained" className="btn btn-primary mx-2" startIcon={<CancelIcon />} color="error" onClick={() => navigate("/home")}>
+                            }} variant="contained" className="btn btn-primary mx-2" startIcon={<CancelIcon />} color="error" onClick={() => navigate("/home")}>
                                 Cancel
                             </Button>
 
